@@ -1,15 +1,26 @@
-import React from 'react'
+import React, { useEffect } from 'react'
+import { useSelector } from 'react-redux';
 import styled from 'styled-components'
+import { useNavigate, useParams } from 'react-router-dom';
+import { selectUserName } from "../features/user/userSlice";
+import { selectMovies } from "../features/movies/moviesSlice";
 
-function Detail() {
+function Details() {
+    const { id } = useParams();
+    const movies = useSelector(selectMovies);
+    const movie = movies.find(movie => movie.id.toString() === id);
+    const BASE_URL = "https://image.tmdb.org/t/p/original/";
+
+    useEffect(() => {
+
+    })
+
     return (
         <Container>
             <Background>
-                <img src="https://prod-ripcut-delivery.disney-plus.net/v1/variant/disney/4F39B7E16726ECF419DD7C49E011DD95099AA20A962B0B10AA1881A70661CE45/scale?width=1440&aspectRatio=1.78&format=jpeg" alt="" />
+                <img src={BASE_URL + movie.backdrop_path} alt="" />
             </Background>
-            <ImgTitle>
-                <img src="https://prod-ripcut-delivery.disney-plus.net/v1/variant/disney/D7AEE1F05D10FC37C873176AAA26F777FC1B71E7A6563F36C6B1B497CAB1CEC2/scale?width=1440&aspectRatio=1.78" alt="Title" />
-            </ImgTitle>
+            <h1>{movie.title}</h1>
             <Controls>
                 <PlayButton>
                     <img src="/images/play-icon-black.png" alt="Play" />
@@ -27,16 +38,16 @@ function Detail() {
                 </GroupWatchButton>
             </Controls>
             <SubTitle>
-                2018 * 7m * Family, Fantasy, Kids, Animation
+                {movie.release_date.split('-')[0]} - 7m
             </SubTitle>
             <Description>
-                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Adipisci omnis, sint delectus doloremque exercitationem eligendi harum illum aliquam? Odit eius ratione tempore debitis eveniet quibusdam temporibus ad sit quasi voluptatem?
+                {movie.overview}
             </Description>
         </Container>
     )
 }
 
-export default Detail
+export default Details
 
 const Container = styled.main`
     min-height: calc(100vh - 70px);
@@ -137,4 +148,5 @@ const Description = styled.div`
     font-size: 20px;
     margin-top: 16px;
     color: rgb(249, 249, 249);
+    max-width: 760px;
 `

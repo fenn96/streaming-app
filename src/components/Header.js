@@ -1,39 +1,95 @@
-import React from 'react'
+import React, { useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components'
+import { auth, provider } from '../firebase';
+import { signOut, signInWithPopup } from 'firebase/auth';
+import { useNavigate } from 'react-router-dom';
+import { selectUserName, selectUserPhoto, setUserLogin, setSignOut } from "../features/user/userSlice"
 
 function Header() {
-  return (
-    <Nav>
-        <Logo src="/images/logo.svg" />
-        <NavMenu>
-            <a>
-                <img src="/images/home-icon.svg" alt="Home" />
-                <span>HOME</span>
-            </a>
-            <a>
-                <img src="/images/search-icon.svg" alt="Search" />
-                <span>SEARCH</span>
-            </a>
-            <a>
-                <img src="/images/watchlist-icon.svg" alt="Watch List" />
-                <span>WATCH LIST</span>
-            </a>
-            <a>
-                <img src="/images/original-icon.svg" alt="Originals" />
-                <span>ORIGINALS</span>
-            </a>
-            <a>
-                <img src="/images/movie-icon.svg" alt="Movies" />
-                <span>MOVIES</span>
-            </a>
-            <a>
-                <img src="/images/series-icon.svg" alt="Series" />
-                <span>SERIES</span>
-            </a>
-        </NavMenu>
-        <UserImg src="/images/profile-pic.jpg" />
-    </Nav>
-  )
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
+    const name = useSelector(selectUserName);
+    const photo = useSelector(selectUserPhoto);
+
+    const handleSignIn = () => {
+        signInWithPopup(auth, provider).then((data) => {
+            let user = data.user
+            dispatch(setUserLogin({
+                name: user.displayName,
+                email: user.email,
+                photo: user.photoURL
+            }))
+            navigate("/")
+            console.log(user)
+        })
+        .catch((error) => {
+            console.log(error)
+        })
+    }
+
+    const handleSignOut = () => {
+        signOut(auth).then((data) => {
+            dispatch(setSignOut(data))
+            navigate("/login")
+        })
+        .catch((error) => {
+            console.log(error)
+        })
+    }
+
+    useEffect(() => {
+        auth.onAuthStateChanged((user) => {
+          if (user) {
+            dispatch(setUserLogin({
+              name: user.displayName,
+              email: user.email,
+              photo: user.photoURL
+            }))
+          } 
+        })
+      })
+
+    return (
+        <Nav>
+            <Logo src="/images/logo.svg" />
+            { !name ? (
+                <LoginContainer>
+                    <LoginBtn onClick={handleSignIn}>LOGIN</LoginBtn>
+                </LoginContainer>
+            ): 
+                <>
+                    <NavMenu>
+                        <a href="/">
+                            <img src="/images/home-icon.svg" alt="Home" />
+                            <span>HOME</span>
+                        </a>
+                        <a>
+                            <img src="/images/search-icon.svg" alt="Search" />
+                            <span>SEARCH</span>
+                        </a>
+                        <a>
+                            <img src="/images/watchlist-icon.svg" alt="Watch List" />
+                            <span>WATCH LIST</span>
+                        </a>
+                        <a>
+                            <img src="/images/original-icon.svg" alt="Originals" />
+                            <span>ORIGINALS</span>
+                        </a>
+                        <a>
+                            <img src="/images/movie-icon.svg" alt="Movies" />
+                            <span>MOVIES</span>
+                        </a>
+                        <a>
+                            <img src="/images/series-icon.svg" alt="Series" />
+                            <span>SERIES</span>
+                        </a>
+                    </NavMenu>
+                    <UserImg onClick={handleSignOut} src={photo} referrerPolicy='no-referrer' />
+                </>
+            }
+        </Nav>
+    )
 }
 
 export default Header
@@ -60,6 +116,8 @@ const NavMenu = styled.div`
     
     a {
         display: flex;
+        text-decoration: none;
+        color: white;
         align-items: center;
         padding: 0 12px;
         cursor: pointer;
@@ -102,4 +160,27 @@ const UserImg = styled.img`
     height: 48px;
     border-radius: 50%;
     cursor: pointer;
+`
+
+const LoginContainer = styled.div`
+    display: flex;
+    flex: 1;
+    justify-content: flex-end;
+`
+
+const LoginBtn = styled.div`
+    border: 1px solid #f9f9f9;
+    padding: 8px 16px;
+    border-radius: 4px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    background-color: rgba(0, 0, 0, 0.6);
+    transition: all 0.2s ease 0s;
+    cursor: pointer;
+
+    &:hover {
+        background-color: #f9f9f9;
+        color: #000;
+        border-color: transparent;
+    }
 `

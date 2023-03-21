@@ -1,10 +1,20 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import styled from 'styled-components';
 import ImgSlider from './ImgSlider';
 import Viewers from './Viewers';
 import Movies from './Movies';
+import { useNavigate } from 'react-router-dom';
+import { selectUserName } from "../features/user/userSlice"
 
 function Home() {
+  const navigate = useNavigate();
+  const name = useSelector(selectUserName);
+
+  useEffect(() => {
+    
+  }, [])
+
   return (
     <Container>
         <ImgSlider />

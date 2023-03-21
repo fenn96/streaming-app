@@ -1,12 +1,42 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
+import { signInWithPopup } from 'firebase/auth';
+import { auth, provider } from '../firebase';
+import { useNavigate } from 'react-router-dom';
+import { setUserLogin, selectUserName } from "../features/user/userSlice"
 
 function Login() {
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
+    const name = useSelector(selectUserName);
+
+    useEffect(() => {
+
+    })
+
+    const handleClick = () => {
+        signInWithPopup(auth, provider).then((data) => {
+            let user = data.user
+            dispatch(setUserLogin({
+                name: user.displayName,
+                email: user.email,
+                photo: user.photoURL
+            }))
+            navigate("/")
+            console.log(user)
+        })
+        .catch((error) => {
+            console.log(error)
+        })
+    }
+
+
     return (
         <Container>
             <CTA>
                 <CTALogoOne src="/images/cta-logo-one.svg" />
-                <SignUp>GET IT ALL HERE</SignUp>
+                <SignUp onClick={handleClick}>GET IT ALL HERE</SignUp>
                 <Description>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Sequi sunt laboriosam sit officia ratione animi! Perspiciatis numquam natus quod sapiente nesciunt perferendis dolorem, necessitatibus officiis fuga ad minima, hic error?</Description>
                 <CTALogoTwo src="/images/cta-logo-two.png" />
             </CTA>
