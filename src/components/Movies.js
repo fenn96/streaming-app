@@ -1,19 +1,33 @@
 import React from 'react'
 import styled from'styled-components';
-import { selectMovies } from '../features/movies/moviesSlice';
+import { selectPopularMovies, selectTrendingMovies } from '../features/movies/moviesSlice';
 import { useSelector } from 'react-redux';
 import { Link } from "react-router-dom";
 
 function Movies() {
-    const movies = useSelector(selectMovies);
+    const trendingMovies = useSelector(selectTrendingMovies);
+    const popularMovies = useSelector(selectPopularMovies);
     const BASE_URL = "https://image.tmdb.org/t/p/w500/";
+    console.log(popularMovies)
 
     return (
         <Container>
-            <h4>Recommended for You</h4>
+            <h4>Trending Movies</h4>
             <Content>
-                { movies && 
-                    movies.map((movie) => (
+                { trendingMovies && 
+                    trendingMovies.map((movie) => (
+                            <Wrap key={movie.id}>
+                                <Link to={"/details/" + movie.id}>
+                                    <img src={BASE_URL + movie.backdrop_path} alt={movie.title} />
+                                </Link>
+                            </Wrap>
+                    ))
+                }
+            </Content>
+            <h4>Popular Movies</h4>
+            <Content>
+                { popularMovies && 
+                    popularMovies.map((movie) => (
                             <Wrap key={movie.id}>
                                 <Link to={"/details/" + movie.id}>
                                     <img src={BASE_URL + movie.backdrop_path} alt={movie.title} />
@@ -35,7 +49,16 @@ const Container = styled.div`
 const Content = styled.div`
     display: grid;
     grid-gap: 25px;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+    padding-bottom: 15px;
+
+    @media screen and (min-width: 768px) {
+        grid-template-columns: repeat(2, minmax(0, 0.5fr));
+    }
+
+    @media screen and (min-width: 1024px) {
+        grid-template-columns: repeat(4, minmax(0, 0.5fr));
+    }
 `
 
 const Wrap = styled.div`

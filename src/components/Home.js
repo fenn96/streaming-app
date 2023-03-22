@@ -1,19 +1,39 @@
 import React, { useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import ImgSlider from './ImgSlider';
 import Viewers from './Viewers';
 import Movies from './Movies';
-import { useNavigate } from 'react-router-dom';
-import { selectUserName } from "../features/user/userSlice"
+import { setPopularMovies, setTrendingMovies } from "../features/movies/moviesSlice";
 
 function Home() {
-  const navigate = useNavigate();
-  const name = useSelector(selectUserName);
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    
-  }, [])
+    fetch(`https://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc&api_key=${process.env.REACT_APP_TMDB_API_KEY}&language=en-US&page=1`)
+        .then(response => response.json())
+        .then((data) => {
+          let movies = data.results.splice(0,4);
+          dispatch(setPopularMovies({
+            popularMovies: movies
+          }));
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+
+    fetch(`https://api.themoviedb.org/3/trending/movie/week?api_key=${process.env.REACT_APP_TMDB_API_KEY}&language=en-US&page=1`)
+        .then(response => response.json())
+        .then((data) => {
+          let movies = data.results.splice(0,4);
+          dispatch(setTrendingMovies({
+            trendingMovies: movies
+          }));
+        })
+        .catch((error) => {
+          console.error(error);
+        });    
+  })
 
   return (
     <Container>

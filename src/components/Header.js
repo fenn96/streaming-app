@@ -64,25 +64,21 @@ function Header() {
                             <img src="/images/home-icon.svg" alt="Home" />
                             <span>HOME</span>
                         </a>
-                        <a>
+                        <a href="/">
                             <img src="/images/search-icon.svg" alt="Search" />
                             <span>SEARCH</span>
                         </a>
-                        <a>
+                        <a href="/">
                             <img src="/images/watchlist-icon.svg" alt="Watch List" />
                             <span>WATCH LIST</span>
                         </a>
-                        <a>
+                        <a href="/">
                             <img src="/images/original-icon.svg" alt="Originals" />
                             <span>ORIGINALS</span>
                         </a>
-                        <a>
+                        <a href="/">
                             <img src="/images/movie-icon.svg" alt="Movies" />
                             <span>MOVIES</span>
-                        </a>
-                        <a>
-                            <img src="/images/series-icon.svg" alt="Series" />
-                            <span>SERIES</span>
                         </a>
                     </NavMenu>
                     <UserImg onClick={handleSignOut} src={photo} referrerPolicy='no-referrer' />
@@ -152,6 +148,10 @@ const NavMenu = styled.div`
                 transform: scaleX(1);
             }
         }
+    }
+
+    @media screen and (max-width: 768px) {
+        visibility: hidden;
     }
 `
 
